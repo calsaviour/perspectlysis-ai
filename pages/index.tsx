@@ -1,89 +1,182 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '@/styles/Home.module.css'
-import mainImage from '@/assets/images/main_image.jpg'
-import { Form, Button, Spinner } from 'react-bootstrap'
-import { FormEvent, useState } from 'react'
+import { AnimatePresence, motion } from "framer-motion";
+import type { NextPage } from "next";
+import Head from "next/head";
+import Image from "next/image";
+import { useState } from "react";
+import { Toaster, toast } from "react-hot-toast";
+import DropDown, { VibeType } from "../components/DropDown";
+import Footer from "../components/Footer";
+import Github from "../components/GitHub";
+import Header from "../components/Header";
+import LoadingDots from "../components/LoadingDots";
+import ResizablePanel from "../components/ResizablePanel";
 
+const Home: NextPage = () => {
+  const [loading, setLoading] = useState(false);
+  const [bio, setBio] = useState("");
+  const [vibe, setVibe] = useState<VibeType>("Left");
+  const [generatedBios, setGeneratedBios] = useState<String>("");
 
-export default function Home() {
-  const [quote, setQuote] = useState("");
-  const [perspectlysis, setPerspectlysis] = useState("");
-  const [quoteLoading, setQuoteLoading] = useState(false);
-  const [quoteLoadingError, setQuoteLoadingError] = useState(false)
+  console.log("Streamed response: ", generatedBios);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  const prompt =
+    vibe === "Left"
+      ? `Can you tell me how will a person with liberal political, economic and
+        social views feels when reading ${bio}
+        }`
+      : `
+        Can you tell me how will a person with ${vibe} political, economic and
+        social views feels when reading ${bio}
+        `;
+
+  const generateBio = async (e: any) => {
     e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const article = formData.get("article")?.toString();
+    setGeneratedBios("");
+    setLoading(true);
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt,
+      }),
+    });
+    console.log("Edge function returned.");
 
-    if (article) {
-      try {
-        setQuote("");
-        setQuoteLoadingError(false);
-        setQuoteLoading(true);
-
-        const response = await fetch('/api/perspectlysisPost', {
-          method: "POST",
-          headers: {
-            'content-type': 'application/json'
-          },
-          body: JSON.stringify({article})
-        });
-
-        const json = await response.json();
-        setPerspectlysis(json.perspectlysis);
-        console.log("Getting response", perspectlysis)
-
-      } catch (error) {
-        console.error(error);
-        setQuoteLoadingError(true);
-      } finally {
-        setQuoteLoading(false);
-      }
+    if (!response.ok) {
+      throw new Error(response.statusText);
     }
-  }
+
+    // This data is a ReadableStream
+    const data = response.body;
+    if (!data) {
+      return;
+    }
+
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      const chunkValue = decoder.decode(value);
+      setGeneratedBios((prev) => prev + chunkValue);
+    }
+
+    setLoading(false);
+  };
+
   return (
-    <>
+    <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
       <Head>
-        <title>Perspectlysis AI</title>
-        <meta name="description" content="By perspectlysis-ai" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Perspectlysis Generator</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <h1>Perspectlysis AI</h1>
-        <h2>Powered by GPT-3</h2>
-        <div>
-          Copy and paste the article and the AI will generate a Perspectlysis
-        </div>
-        <div className={styles.mainImageContainer}>
-          <Image src={mainImage}
-            fill
-            alt='A picture of Perspectlysis'
-            priority
-            className={styles.mainImage}
-          />
-        </div>
-        <Form onSubmit={handleSubmit} className={styles.inputForm}>
-          <Form.Group controlId="article-input">
-            <Form.Label>Textarea</Form.Label>
-            <Form.Control
-              name='article'
-              as="textarea"
-              placeholder="textarea"
+
+      <Header />
+      <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-12 sm:mt-20">
+        <h1 className="sm:text-6xl text-4xl max-w-2xl font-bold text-slate-900">
+          Generate your next Perspectlysis in seconds
+        </h1>
+        <div className="max-w-xl w-full">
+          <div className="flex mt-10 items-center space-x-3">
+            <Image
+              src="/1-black.png"
+              width={30}
+              height={30}
+              alt="1 icon"
+              className="mb-5 sm:mb-0"
             />
-          </Form.Group>
+            <p className="text-left font-medium">
+              Copy article{" "}
+              <span className="text-slate-500">
+                (or write a few sentences about an article)
+              </span>
+              .
+            </p>
+          </div>
+          <textarea
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            rows={4}
+            className="w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black my-5"
+            placeholder={
+              "Copy and paste the article"
+            }
+          />
+          <div className="flex mb-5 items-center space-x-3">
+            <Image src="/2-black.png" width={30} height={30} alt="1 icon" />
+            <p className="text-left font-medium">Select your view.</p>
+          </div>
+          <div className="block">
+            <DropDown vibe={vibe} setVibe={(newVibe) => setVibe(newVibe)} />
+          </div>
 
-          <Button type='submit' className='mb-3' disabled={quoteLoading}>
-            Make a perspectlysis
-          </Button>
-        </Form>
-        {quoteLoading && <Spinner animation="border" />}
-        {quoteLoadingError && "Something went wrong. Please try again."}
-        {perspectlysis && <h5>{perspectlysis}</h5>}
+          {!loading && (
+            <button
+              className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full"
+              onClick={(e) => generateBio(e)}
+            >
+              Generate your perspectlysis &rarr;
+            </button>
+          )}
+          {loading && (
+            <button
+              className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full"
+              disabled
+            >
+              <LoadingDots color="white" style="large" />
+            </button>
+          )}
+        </div>
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+          toastOptions={{ duration: 2000 }}
+        />
+        <hr className="h-px bg-gray-700 border-1 dark:bg-gray-700" />
+        <ResizablePanel>
+          <AnimatePresence mode="wait">
+            <motion.div className="space-y-10 my-10">
+              {generatedBios && (
+                <>
+                  <div>
+                    <h2 className="sm:text-4xl text-3xl font-bold text-slate-900 mx-auto">
+                      Your generated perspectlysis
+                    </h2>
+                  </div>
+                  <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
+                    {generatedBios
+                      .substring(generatedBios.indexOf("1") + 3)
+                      .split("2.")
+                      .map((generatedBio) => {
+                        return (
+                          <div
+                            className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
+                            onClick={() => {
+                              navigator.clipboard.writeText(generatedBio);
+                              toast("Bio copied to clipboard", {
+                                icon: "✂️",
+                              });
+                            }}
+                            key={generatedBio}
+                          >
+                            <p>{generatedBio}</p>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </ResizablePanel>
       </main>
+      <Footer />
+    </div>
+  );
+};
 
-    </>
-  )
-}
+export default Home;
