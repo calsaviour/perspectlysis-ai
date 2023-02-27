@@ -15,9 +15,9 @@ class MyDocument extends Document {
             property="og:description"
             content="Generate your next Perspectlysis bio in seconds."
           />
-          <meta property="og:title" content="Twitter Bio Generator" />
+          <meta property="og:title" content="Perspectlysis" />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="Twitter Bio Generator" />
+          <meta name="twitter:title" content="Perspectlysis" />
           <meta
             name="twitter:description"
             content="Generate your next Perspectlysis bio in seconds."
