@@ -110,6 +110,14 @@ const Home: NextPage = () => {
             <Image src="/2-black.png" width={30} height={30} alt="1 icon" />
             <p className="text-left font-medium">Select your view.</p>
           </div>
+          <div>
+            <p className="text-left font-medium text-cyan-500">
+              Left (Belief in greater economic and social equality, support for progressive)
+            </p>
+            <p className="text-left font-medium text-red-500">
+              Right Wing (emphasize the importance of traditional values such as patriotism, family, and religion)
+            </p>
+          </div>
           <div className="block">
             <DropDown vibe={vibe} setVibe={(newVibe) => setVibe(newVibe)} />
           </div>
