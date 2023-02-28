@@ -16,7 +16,8 @@ const Home: NextPage = () => {
   const [bio, setBio] = useState("");
   const [vibe, setVibe] = useState<VibeType>("Left");
   const [generatedBios, setGeneratedBios] = useState<String>("");
-
+  const [generateSentiment, setGenerateSentiment] = useState<String>("2");
+  
   console.log("Streamed response: ", generatedBios);
 
   const prompt =
@@ -63,8 +64,8 @@ const Home: NextPage = () => {
       done = doneReading;
       const chunkValue = decoder.decode(value);
       setGeneratedBios((prev) => prev + chunkValue);
+      
     }
-
     setLoading(false);
   };
 
@@ -138,6 +139,9 @@ const Home: NextPage = () => {
               <LoadingDots color="white" style="large" />
             </button>
           )}
+        </div>
+        <div className="block py-10">
+            <p>Sentiment Score: {generateSentiment} </p>
         </div>
         <Toaster
           position="top-center"
