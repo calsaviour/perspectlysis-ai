@@ -56,12 +56,12 @@ export default async function handler(
     res: NextApiResponse
   ) {
 
-    const url = process.env.SENTIMENT_ANALYISIS_ENDPOINT;
+    const url = process.env.SENTIMENT_ANALYISIS_ENDPOINT!;
     const { text }= req.body
     console.log(text)
 
     const response = await fetch(
-    url ,
+      url ,
         {
             body: JSON.stringify({ text }),
             headers: {

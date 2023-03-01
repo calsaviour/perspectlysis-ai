@@ -85,8 +85,8 @@ const Home: NextPage = () => {
   }
 
   const getData = async (e: any) => {
-    await generateBio(e);
-    await getSentiment();
+    generateBio(e);
+    getSentiment(e);
   }
 
   return (
