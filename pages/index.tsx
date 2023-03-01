@@ -10,13 +10,14 @@ import Github from "../components/GitHub";
 import Header from "../components/Header";
 import LoadingDots from "../components/LoadingDots";
 import ResizablePanel from "../components/ResizablePanel";
+import Sentiment from "../components/Sentiment";
 
 const Home: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const [bio, setBio] = useState("");
   const [vibe, setVibe] = useState<VibeType>("Left");
   const [generatedBios, setGeneratedBios] = useState<String>("");
-  const [generateSentiment, setGenerateSentiment] = useState<String>("");
+  const [generateSentiment, setGenerateSentiment] = useState<string>("");
   
   console.log("Streamed response: ", generatedBios);
 
@@ -161,7 +162,7 @@ const Home: NextPage = () => {
           )}
         </div>
         <div className="block py-10">
-            <p>Sentiment Score: {generateSentiment} </p>
+            <Sentiment score={generateSentiment}/>
         </div>
         <Toaster
           position="top-center"
