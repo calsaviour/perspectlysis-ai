@@ -16,7 +16,7 @@ const Home: NextPage = () => {
   const [bio, setBio] = useState("");
   const [vibe, setVibe] = useState<VibeType>("Left");
   const [generatedBios, setGeneratedBios] = useState<String>("");
-  const [generateSentiment, setGenerateSentiment] = useState<String>("2");
+  const [generateSentiment, setGenerateSentiment] = useState<String>("");
   
   console.log("Streamed response: ", generatedBios);
 
@@ -68,6 +68,26 @@ const Home: NextPage = () => {
     }
     setLoading(false);
   };
+
+  const getSentiment = async (e: any) => {
+    const response = await fetch('/api/sentiment', {
+      method: "POST",
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({ "text": bio })
+    });
+
+    const json = await response.json();
+    console.log("From getSentiment")
+    console.log(json)
+    setGenerateSentiment(json.body);
+  }
+
+  const getData = async (e: any) => {
+    await generateBio(e);
+    await getSentiment();
+  }
 
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
@@ -126,7 +146,7 @@ const Home: NextPage = () => {
           {!loading && (
             <button
               className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full"
-              onClick={(e) => generateBio(e)}
+              onClick={(e) => getData(e)}
             >
               Generate your perspectlysis &rarr;
             </button>
