@@ -1,8 +1,8 @@
 # [perspectlysis.vercel.com](https://www.perspectlysis.vercel.com/)
 
-This project generates Twitter bios for you using AI.
+This project generates Perspectlysis for you using AI.
 
-[![Twitter Bio Generator](./public/screenshot.png)](https://www.perspectlysis.vercel.com)
+[![Perspectlysis Generator](./public/screenshot.png)](https://www.perspectlysis.vercel.com)
 
 ## How it works
 
@@ -19,9 +19,3 @@ Then, run the application in the command line and it will be available at `http:
 ```bash
 npm run dev
 ```
-
-## One-Click Deploy
-
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples):
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Nutlope/twitterbio&env=OPENAI_API_KEY&project-name=twitter-bio-generator&repo-name=twitterbio)
