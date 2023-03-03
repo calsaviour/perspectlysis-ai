@@ -1,8 +1,8 @@
-# [TwitterBio.com](https://www.twitterbio.com/)
+# [perspectlysis.vercel.com](https://www.perspectlysis.vercel.com/)
 
 This project generates Twitter bios for you using AI.
 
-[![Twitter Bio Generator](./public/screenshot.png)](https://www.twitterbio.com)
+[![Twitter Bio Generator](./public/screenshot.png)](https://www.perspectlysis.vercel.com)
 
 ## How it works
 
