@@ -18,7 +18,8 @@ const Home: NextPage = () => {
   const [vibe, setVibe] = useState<VibeType>("Left");
   const [generatedBios, setGeneratedBios] = useState<String>("");
   const [generateSentiment, setGenerateSentiment] = useState<string>("");
-  
+  const [apiKey, setApiKey] = useState<string | undefined>("");
+
   console.log("Streamed response: ", generatedBios);
 
   const prompt =
@@ -42,6 +43,7 @@ const Home: NextPage = () => {
       },
       body: JSON.stringify({
         prompt,
+        apiKey
       }),
     });
     console.log("Edge function returned.");
@@ -103,6 +105,21 @@ const Home: NextPage = () => {
           Generate your next Perspectlysis in seconds
         </h1>
         <div className="max-w-xl w-full">
+            <label htmlFor="openai-apikey" className="block text-sm font-medium leading-6 text-gray-900">
+              OpenAI APIKEY
+            </label>
+            <div className="mt-2">
+              <input
+                type="text"
+                name="openai-apikey"
+                id="openai-apikey"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                placeholder="OPENAI-APIKEY"
+                onChange={(e) => setApiKey(e.target.value)}
+              />
+            </div>
+          </div>
+        <div className="max-w-xl w-full">
           <div className="flex mt-10 items-center space-x-3">
             <Image
               src="/1-black.png"
@@ -162,7 +179,7 @@ const Home: NextPage = () => {
           )}
         </div>
         <div className="block py-10">
-            <Sentiment score={generateSentiment}/>
+          <Sentiment score={generateSentiment} />
         </div>
         <Toaster
           position="top-center"
